@@ -60,6 +60,16 @@ jobs:
               if old not in s:
                   raise SystemExit("Expected source pattern not found: " + old[:100].replace("\n", "\\n"))
               s = s.replace(old, new, 1)
+          route_fixes = [
+              ("builder.addRoute(v4Routes.next().toIpPrefix())", "v4Routes.next().let { builder.addRoute(it.address(), it.prefix()) }"),
+              ("builder.addRoute(v6Routes.next().toIpPrefix())", "v6Routes.next().let { builder.addRoute(it.address(), it.prefix()) }"),
+              ("builder.excludeRoute(ex4.next().toIpPrefix())", "ex4.next().let { builder.excludeRoute(IpPrefix(java.net.InetAddress.getByName(it.address()), it.prefix())) }"),
+              ("builder.excludeRoute(ex6.next().toIpPrefix())", "ex6.next().let { builder.excludeRoute(IpPrefix(java.net.InetAddress.getByName(it.address()), it.prefix())) }"),
+          ]
+          for old, new in route_fixes:
+              if old not in s:
+                  raise SystemExit("Expected route source pattern not found: " + old)
+              s = s.replace(old, new, 1)
           p.write_text(s)
           print("Applied checked libbox compatibility edits to", p)
           PY
