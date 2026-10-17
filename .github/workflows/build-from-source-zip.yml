@@ -5,7 +5,7 @@ on:
   push:
     branches: [main, master]
     paths:
-      - 'SmartTunnelAndroid-0.22.0-source.zip'
+      - 'SmartTunnelAndroid-0.22.0-source*.zip'
       - '.github/workflows/build-from-source-zip.yml'
 
 permissions:
@@ -23,13 +23,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ZIP="SmartTunnelAndroid-0.22.0-source.zip"
-          test -s "$ZIP" || { echo "Missing $ZIP. Upload the downloaded source ZIP to the repository root first."; exit 1; }
+          ZIP="$(find . -maxdepth 1 -type f -name 'SmartTunnelAndroid-0.22.0-source*.zip' -print | sort | tail -n 1)"
+          test -n "$ZIP" && test -s "$ZIP" || { echo "Missing source ZIP. Upload SmartTunnelAndroid-0.22.0-source*.zip to the repository root."; exit 1; }
+          echo "Using source archive: $ZIP"
           mkdir -p "$RUNNER_TEMP/smarttunnel-src"
           unzip -q "$ZIP" -d "$RUNNER_TEMP/smarttunnel-src"
           ROOT="$(find "$RUNNER_TEMP/smarttunnel-src" -type f -name settings.gradle.kts -print -quit | xargs -r dirname)"
           test -n "$ROOT" || { echo "settings.gradle.kts was not found in the uploaded ZIP."; exit 1; }
-          test -f "$ROOT/.github/workflows/android-apk.yml"
+          test -f "$ROOT/.github/workflows/android-apk.yml" || { echo "Android project workflow file is missing inside the ZIP."; exit 1; }
           echo "root=$ROOT" >> "$GITHUB_OUTPUT"
 
       - name: Set up Node.js
