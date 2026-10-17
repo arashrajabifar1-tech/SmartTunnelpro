@@ -33,6 +33,37 @@ jobs:
           test -f "$ROOT/.github/workflows/android-apk.yml" || { echo "Android project workflow file is missing inside the ZIP."; exit 1; }
           echo "root=$ROOT" >> "$GITHUB_OUTPUT"
 
+      - name: Apply libbox API compatibility fixes
+        working-directory: ${{ steps.source.outputs.root }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("app/src/main/java/com/smarttunnel/app/vpn/VpnEngine.kt")
+          s = p.read_text()
+          replacements = [
+              ("import io.nekohasekai.libbox.AutoRedirectHandler\n", ""),
+              ("import io.nekohasekai.libbox.AutoRedirectSession\n", ""),
+              ("                dnsSearchDomain = StringArray(props.domains?.split(' ')?.filter { it.isNotBlank() }.orEmpty().iterator())\n", ""),
+              ("    override fun usePlatformAutoRedirect(): Boolean = false\n", ""),
+              ("    override fun createAutoRedirect(options: ByteArray?, handler: AutoRedirectHandler?): AutoRedirectSession = error(\"Platform auto-redirect is not available\")\n", ""),
+              ("    private fun String.toIpPrefix(): IpPrefix = IpPrefix(this)", """    private fun String.toIpPrefix(): IpPrefix {
+                  val parts = split("/", limit = 2)
+                  val address = java.net.InetAddress.getByName(parts[0])
+                  val prefix = parts.getOrNull(1)?.toIntOrNull()
+                      ?: if (address is Inet6Address) 128 else 32
+                  require(prefix in 0..if (address is Inet6Address) 128 else 32) { "Invalid IP prefix: $this" }
+                  return IpPrefix(address, prefix)
+              }"""),
+          ]
+          for old, new in replacements:
+              if old not in s:
+                  raise SystemExit("Expected source pattern not found: " + old[:100].replace("\n", "\\n"))
+              s = s.replace(old, new, 1)
+          p.write_text(s)
+          print("Applied checked libbox compatibility edits to", p)
+          PY
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
