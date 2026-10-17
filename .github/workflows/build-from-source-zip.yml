@@ -9,7 +9,7 @@ on:
       - '.github/workflows/build-from-source-zip.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-debug-apk:
@@ -305,12 +305,12 @@ jobs:
           v = v.replace("versionCode = 220", "versionCode = 230")
           v = v.replace("Android app version is 0.22.0 / code 220", "Android app version is 0.23.0 / code 230")
           v = v.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.23.1-arm64-debug-apk")
-          v = v.replace("0.23.0", "0.23.1").replace("code 230", "code 231")
+          v = v.replace("0.23.0", "0.23.1").replace("code 230", "code 231").replace("versionCode = 230", "versionCode = 231")
           validator.write_text(v)
           embedded_workflow = Path(".github/workflows/android-apk.yml")
           if embedded_workflow.exists():
               ew = embedded_workflow.read_text()
-              ew = ew.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.23.0-arm64-debug-apk")
+              ew = ew.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.23.1-arm64-debug-apk")
               ew = ew.replace("0.22.0", "0.23.0")
               ew = ew.replace("0.23.0", "0.23.1")
               embedded_workflow.write_text(ew)
@@ -374,3 +374,18 @@ jobs:
           path: ${{ steps.source.outputs.root }}/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
+
+      - name: Publish direct-download APK release
+        if: success() && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          APK_NAME="SmartTunnel-0.23.1-arm64.apk"
+          cp "${{ steps.source.outputs.root }}/app/build/outputs/apk/debug/app-debug.apk" "$APK_NAME"
+          sha256sum "$APK_NAME" > "$APK_NAME.sha256"
+          if gh release view v0.23.1 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload v0.23.1 "$APK_NAME" "$APK_NAME.sha256" --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit v0.23.1 --latest --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create v0.23.1 "$APK_NAME" "$APK_NAME.sha256" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Smart Tunnel Pro v0.23.1 (ARM64)" --latest --notes "Mobile-first Persian glass UI, large one-tap connection entry, configuration import, speed-test shortcuts and a custom green-S/blue-circle adaptive launcher icon. Debug-signed APK for direct installation; physical VPN, network leak and Google Play release-signing tests are not implied."
+          fi
