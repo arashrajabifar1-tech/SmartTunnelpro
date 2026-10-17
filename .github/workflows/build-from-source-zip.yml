@@ -291,7 +291,7 @@ jobs:
           (res / "mipmap-anydpi-v26" / "ic_launcher_round.xml").write_text(adaptive)
           svg = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" role="img" aria-label="Smart Tunnel green S blue circle"><circle cx="54" cy="54" r="38" fill="#247BFF"/><path d="M72 36 C63 27 45 27 35 34 C25 41 29 50 42 55 L61 62 C75 68 72 81 59 87 C47 92 31 88 26 80" fill="none" stroke="#3BE88D" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>"""
           (Path("app/src/main/assets") / "smart_tunnel_icon.svg").write_text(svg)
-                    gradle = Path("app/build.gradle.kts")
+          gradle = Path("app/build.gradle.kts")
           g = gradle.read_text()
           g = g.replace("versionCode = 220", "versionCode = 230").replace('versionName = "0.22.0"', 'versionName = "0.23.0"')
           g = g.replace("versionCode = 230", "versionCode = 231").replace('versionName = "0.23.0"', 'versionName = "0.23.1"')
@@ -314,7 +314,7 @@ jobs:
               ew = ew.replace("0.22.0", "0.23.0")
               ew = ew.replace("0.23.0", "0.23.1")
               embedded_workflow.write_text(ew)
-          print("Applied v0.23.0 quick-connect UI, file import, and ARM64-only APK configuration")
+          print("Applied v0.23.1 glass connect UI, branded launcher icon, and ARM64-only APK configuration")
           PY
 
       - name: Set up Node.js
