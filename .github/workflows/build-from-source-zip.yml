@@ -75,6 +75,51 @@ jobs:
           html = Path("app/src/main/assets/index.html")
           h = html.read_text()
           h = h.replace("v0.22.0", "v0.23.0").replace("0.22.0", "0.23.0")
+          if "/* Smart Tunnel glass UI v0.23.1 */" not in h:
+              style_end = h.rfind("</style>")
+              if style_end < 0:
+                  raise SystemExit("Could not locate stylesheet for glass UI")
+              glass_css = r'''/* Smart Tunnel glass UI v0.23.1 */
+#quickStartCard.st-glass-hero{position:relative;isolation:isolate;display:grid;gap:18px;overflow:hidden;margin:14px 0 22px;padding:clamp(18px,4vw,28px);border:1px solid color-mix(in srgb,#8ec2ff 25%,transparent);border-radius:30px;background:linear-gradient(145deg,color-mix(in srgb,#18334f 96%,transparent),color-mix(in srgb,#09182a 94%,transparent));color:#f3f8ff;box-shadow:0 22px 58px color-mix(in srgb,#020817 38%,transparent),inset 0 1px 0 color-mix(in srgb,#ffffff 12%,transparent);backdrop-filter:blur(24px) saturate(145%);-webkit-backdrop-filter:blur(24px) saturate(145%)}
+#quickStartCard.st-glass-hero:before{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background:radial-gradient(ellipse at 85% 0%,color-mix(in srgb,#2587ff 22%,transparent),transparent 55%),radial-gradient(ellipse at 6% 80%,color-mix(in srgb,#27e58c 10%,transparent),transparent 45%)}
+#quickStartCard .st-hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#quickStartCard .st-brand-lockup{display:flex;align-items:center;gap:12px;min-width:0}
+#quickStartCard .st-logo{width:50px;height:50px;flex:0 0 50px;filter:drop-shadow(0 5px 14px color-mix(in srgb,#247bff 38%,transparent))}
+#quickStartCard .st-brand-copy{display:grid;gap:4px;min-width:0}
+#quickStartCard .st-eyebrow{font-size:10px;font-weight:800;letter-spacing:1.7px;color:#8abaff}
+#quickStartCard .st-hero-title{font-size:clamp(18px,3.4vw,24px);font-weight:850;line-height:1.5;color:#f5f9ff}
+#quickStartCard .st-status-pill{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid color-mix(in srgb,#42e99a 28%,transparent);border-radius:999px;background:color-mix(in srgb,#24d883 9%,transparent);font-size:11px;white-space:nowrap;color:#a6f5ce}
+#quickStartCard .st-status-pill:before{content:"";width:7px;height:7px;border-radius:50%;background:#43e994;box-shadow:0 0 12px color-mix(in srgb,#43e994 72%,transparent)}
+#quickStartCard .st-connect-layout{display:grid;grid-template-columns:minmax(0,1fr) 158px;align-items:center;gap:20px;padding:6px 2px}
+#quickStartCard .st-hero-copy{display:grid;gap:13px;min-width:0}
+#quickStartCard .st-hero-description{margin:0;color:#bdcde0;font-size:13px;line-height:1.95}
+#quickStartCard #quickStatus{margin:0;padding:11px 13px;border:1px solid color-mix(in srgb,#b7d5ff 13%,transparent);border-radius:15px;background:color-mix(in srgb,#d9eaff 5%,transparent);color:#d9e7f8;font-size:12px;line-height:1.85}
+#quickStartCard #quickStatus.ok{border-color:color-mix(in srgb,#35e999 30%,transparent);background:color-mix(in srgb,#35e999 8%,transparent);color:#b9f8d8}
+#quickStartCard #quickStatus.bad{border-color:color-mix(in srgb,#ff7185 35%,transparent);background:color-mix(in srgb,#ff7185 8%,transparent);color:#ffc1ca}
+#quickStartCard .st-connect-orb{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:148px;height:148px;justify-self:center;padding:0;border:1px solid color-mix(in srgb,#9ecbff 52%,transparent);border-radius:50%;background:radial-gradient(circle at 35% 24%,#2b8aff,#1351b5 58%,#0b2a64);box-shadow:0 0 0 8px color-mix(in srgb,#2c8aff 9%,transparent),0 14px 34px color-mix(in srgb,#247bff 32%,transparent),inset 0 1px 1px color-mix(in srgb,#ffffff 36%,transparent);color:#fff;cursor:pointer;transition:transform .18s ease,filter .18s ease,box-shadow .18s ease}
+#quickStartCard .st-connect-orb:before{content:"";position:absolute;inset:-8px;border:1px solid color-mix(in srgb,#6eb2ff 30%,transparent);border-radius:50%;pointer-events:none}
+#quickStartCard .st-connect-orb:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 0 0 9px color-mix(in srgb,#2c8aff 12%,transparent),0 18px 42px color-mix(in srgb,#247bff 38%,transparent)}
+#quickStartCard .st-connect-orb:active{transform:scale(.97)}
+#quickStartCard .st-connect-orb:focus-visible{outline:3px solid #61e9a2;outline-offset:7px}
+#quickStartCard .st-power-icon{width:28px;height:28px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#quickStartCard .st-connect-label{font-size:20px;line-height:1.2;font-weight:850}
+#quickStartCard .st-connect-caption{font-size:10px;color:#c9ddff;font-weight:600}
+#quickStartCard .st-config-details{border:1px solid color-mix(in srgb,#b9d7ff 16%,transparent);border-radius:17px;background:color-mix(in srgb,#d8e9ff 4%,transparent);overflow:hidden}
+#quickStartCard .st-config-details>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;cursor:pointer;color:#ecf5ff;font-size:13px;font-weight:750}
+#quickStartCard .st-config-details>summary::-webkit-details-marker{display:none}
+#quickStartCard .st-config-details>summary:after{content:"＋";font-size:17px;color:#91c1ff}
+#quickStartCard .st-config-details[open]>summary:after{content:"−"}
+#quickStartCard .st-config-fields{display:grid;gap:12px;padding:0 14px 14px}
+#quickStartCard .st-field-label{display:block;margin-bottom:7px;color:#bdcde0;font-size:12px;font-weight:650}
+#quickStartCard #quickConfigInput,#quickStartCard #quickConfigFile{display:block;width:100%;box-sizing:border-box;border:1px solid color-mix(in srgb,#b4d3ff 20%,transparent);border-radius:13px;background:color-mix(in srgb,#020b18 54%,transparent);color:#f2f7ff;padding:11px 12px;font:inherit;font-size:12px;outline:none}
+#quickStartCard #quickConfigInput{resize:vertical;min-height:86px;line-height:1.7}
+#quickStartCard #quickConfigInput:focus,#quickStartCard #quickConfigFile:focus{border-color:#5aa5ff;box-shadow:0 0 0 3px color-mix(in srgb,#328aff 18%,transparent)}
+#quickStartCard .st-action-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+#quickStartCard .st-action-row .btn{width:100%;min-width:0;min-height:44px;border-radius:13px;padding:10px 9px;white-space:normal;line-height:1.55;font-size:12px;border:1px solid color-mix(in srgb,#b9d7ff 18%,transparent);background:color-mix(in srgb,#cfe4ff 7%,transparent);color:#e7f2ff;box-shadow:none}
+#quickStartCard .st-action-row .btn:hover{background:color-mix(in srgb,#4a9bff 16%,transparent);border-color:color-mix(in srgb,#8ec2ff 40%,transparent)}
+@media(max-width:560px){#quickStartCard.st-glass-hero{padding:17px;border-radius:25px;gap:16px}#quickStartCard .st-hero-top{align-items:flex-start}#quickStartCard .st-logo{width:44px;height:44px;flex-basis:44px}#quickStartCard .st-status-pill{font-size:10px;padding:6px 8px}#quickStartCard .st-connect-layout{grid-template-columns:1fr;gap:15px;text-align:center}#quickStartCard .st-hero-copy{order:2}#quickStartCard .st-connect-orb{order:1;width:142px;height:142px}#quickStartCard .st-action-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){#quickStartCard .st-connect-orb{transition:none}}'''
+              h = h[:style_end] + glass_css + "\n" + h[style_end:]
           old_speed = "if(results.some(x=>x.ok))alert(`تست پایان یافت: ${results.filter(x=>x.ok).length}/${results.length} کانفیگ اندازه‌گیری شد. برای استفاده، کانفیگ مطلوب را از صفحهٔ مسیرها انتخاب و دوباره اتصال را دستی برقرار کن.`);"
           new_speed = "if(results.some(x=>x.ok)){const best=list.filter(p=>historyFor(p.id)).sort(measuredSpeedSort)[0];if(best){data.selectedId=best.id;save();render();}alert(`تست پایان یافت: ${results.filter(x=>x.ok).length}/${results.length} کانفیگ اندازه‌گیری شد. سریع‌ترین کانفیگ اندازه‌گیری‌شده انتخاب شد: ${best?best.name:'—'}. برای اتصال، دکمهٔ اتصال را جداگانه بزن.`);}"
           if old_speed in h:
@@ -82,18 +127,40 @@ jobs:
           else:
               raise SystemExit("Could not locate speed benchmark completion handler")
           home_marker = '<div class="card half"><div class="row"><strong>مسیر منتخب</strong>'
-          quick_card = """<div class="card" id="quickStartCard">
-          <div class="row"><strong>اتصال سریع • Smart Tunnel Pro 0.23.0</strong><span class="badge">Quick Start</span></div>
-          <p class="mini">لینک یا متن کانفیگ را وارد کن؛ قبل از اتصال، پروفایل‌ها را بررسی کن. هیچ سرور آماده‌ای به‌صورت تضمینی وجود ندارد.</p>
-          <div class="field"><label for="quickConfigInput">لینک کانفیگ، اشتراک یا متن JSON / Clash</label><textarea id="quickConfigInput" rows="4" placeholder="vless://… یا vmess://… یا لینک https اشتراک"></textarea></div>
-          <div class="field"><label for="quickConfigFile">یا انتخاب فایل کانفیگ</label><input id="quickConfigFile" type="file" accept=".json,.yaml,.yml,.txt,.conf,.confing,.subscription,text/plain,application/json,application/x-yaml"></div>
-          <div class="btns" style="margin-top:10px">
-          <button class="btn primary" id="quickImportBtn">واردکردن کانفیگ</button>
-          <button class="btn good" id="quickConnectBtn">اتصال VPN</button>
-          <button class="btn" id="quickDiscoverBtn">پیداکردن گزینه‌های عمومی</button>
-          <button class="btn" id="quickSpeedBtn">تست سرعت و انتخاب بهترین</button>
-          <button class="btn" id="quickProfilesBtn">مدیریت سرورها</button>
-          </div><div id="quickStatus" class="notice" role="status" aria-live="polite">آماده. برای اتصال باید کانفیگ یا اشتراک معتبر خودت را وارد کنی.</div>
+          quick_card = """<div class="card st-glass-hero" id="quickStartCard" dir="rtl">
+          <div class="st-hero-top">
+            <div class="st-brand-lockup">
+              <svg class="st-logo" viewBox="0 0 108 108" role="img" aria-label="Smart Tunnel">
+                <circle cx="54" cy="54" r="38" fill="#247BFF"></circle>
+                <path d="M72 36 C63 27 45 27 35 34 C25 41 29 50 42 55 L61 62 C75 68 72 81 59 87 C47 92 31 88 26 80" fill="none" stroke="#3BE88D" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+              <div class="st-brand-copy"><span class="st-eyebrow">SMART TUNNEL PRO · 0.23.1</span><strong class="st-hero-title">اتصال امن، ساده و سریع</strong></div>
+            </div>
+            <span class="st-status-pill">آمادهٔ اتصال</span>
+          </div>
+          <div class="st-connect-layout">
+            <div class="st-hero-copy">
+              <p class="st-hero-description">برای شروع، یک کانفیگ معتبر اضافه کن؛ بعد دکمهٔ اتصال را بزن و مجوز VPN اندروید را تأیید کن.</p>
+              <div id="quickStatus" class="notice" role="status" aria-live="polite">آماده. برای اتصال باید کانفیگ یا اشتراک معتبر خودت را وارد کنی.</div>
+            </div>
+            <button class="st-connect-orb" id="quickConnectBtn" type="button" aria-label="شروع اتصال VPN">
+              <svg class="st-power-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v10"></path><path d="M5.6 5.6a9 9 0 1 0 12.8 0"></path></svg>
+              <span class="st-connect-label">اتصال</span><span class="st-connect-caption">VPN</span>
+            </button>
+          </div>
+          <details class="st-config-details">
+            <summary>افزودن کانفیگ یا فایل اتصال</summary>
+            <div class="st-config-fields">
+              <div><label class="st-field-label" for="quickConfigInput">لینک کانفیگ، اشتراک یا متن JSON / Clash</label><textarea id="quickConfigInput" rows="4" placeholder="vless://… یا vmess://… یا لینک https اشتراک"></textarea></div>
+              <div><label class="st-field-label" for="quickConfigFile">یا انتخاب فایل کانفیگ</label><input id="quickConfigFile" type="file" accept=".json,.yaml,.yml,.txt,.conf,.confing,.subscription,text/plain,application/json,application/x-yaml"></div>
+              <button class="btn primary" id="quickImportBtn" type="button">واردکردن کانفیگ</button>
+            </div>
+          </details>
+          <div class="st-action-row">
+            <button class="btn" id="quickDiscoverBtn" type="button">یافتن کانفیگ</button>
+            <button class="btn" id="quickSpeedBtn" type="button">تست سرعت</button>
+            <button class="btn" id="quickProfilesBtn" type="button">مدیریت سرورها</button>
+          </div>
           </div>
           """
           if 'id="quickStartCard"' not in h:
@@ -188,10 +255,12 @@ jobs:
               if js_marker not in h:
                   raise SystemExit("Could not locate JS insertion point")
               h = h.replace(js_marker, js_marker + "\n" + quick_js, 1)
+          h = h.replace("v0.23.0", "v0.23.1").replace("0.23.0", "0.23.1")
           html.write_text(h)
           gradle = Path("app/build.gradle.kts")
           g = gradle.read_text()
           g = g.replace("versionCode = 220", "versionCode = 230").replace('versionName = "0.22.0"', 'versionName = "0.23.0"')
+          g = g.replace("versionCode = 230", "versionCode = 231").replace('versionName = "0.23.0"', 'versionName = "0.23.1"')
           g = g.replace('abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")', 'abiFilters += listOf("arm64-v8a")')
           gradle.write_text(g)
           validator = Path("scripts/validate_project.py")
@@ -201,13 +270,15 @@ jobs:
           v = v.replace('versionName = "0.22.0"', 'versionName = "0.23.0"')
           v = v.replace("versionCode = 220", "versionCode = 230")
           v = v.replace("Android app version is 0.22.0 / code 220", "Android app version is 0.23.0 / code 230")
-          v = v.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.23.0-arm64-debug-apk")
+          v = v.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.23.1-arm64-debug-apk")
+          v = v.replace("0.23.0", "0.23.1").replace("code 230", "code 231")
           validator.write_text(v)
           embedded_workflow = Path(".github/workflows/android-apk.yml")
           if embedded_workflow.exists():
               ew = embedded_workflow.read_text()
               ew = ew.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.23.0-arm64-debug-apk")
               ew = ew.replace("0.22.0", "0.23.0")
+              ew = ew.replace("0.23.0", "0.23.1")
               embedded_workflow.write_text(ew)
           print("Applied v0.23.0 quick-connect UI, file import, and ARM64-only APK configuration")
           PY
