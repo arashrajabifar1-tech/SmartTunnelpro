@@ -71,7 +71,124 @@ jobs:
                   raise SystemExit("Expected route source pattern not found: " + old)
               s = s.replace(old, new, 1)
           p.write_text(s)
-          print("Applied checked libbox compatibility edits to", p)
+          # Upgrade the bundled UI and Android package for v0.23.0.
+          html = Path("app/src/main/assets/index.html")
+          h = html.read_text()
+          h = h.replace("v0.22.0", "v0.23.0").replace("0.22.0", "0.23.0")
+          home_marker = '<div class="card half"><div class="row"><strong>مسیر منتخب</strong>'
+          quick_card = """<div class="card" id="quickStartCard">
+          <div class="row"><strong>اتصال سریع • Smart Tunnel Pro 0.23.0</strong><span class="badge">Quick Start</span></div>
+          <p class="mini">لینک یا متن کانفیگ را وارد کن؛ قبل از اتصال، پروفایل‌ها را بررسی کن. هیچ سرور آماده‌ای به‌صورت تضمینی وجود ندارد.</p>
+          <div class="field"><label for="quickConfigInput">لینک کانفیگ، اشتراک یا متن JSON / Clash</label><textarea id="quickConfigInput" rows="4" placeholder="vless://… یا vmess://… یا لینک https اشتراک"></textarea></div>
+          <div class="field"><label for="quickConfigFile">یا انتخاب فایل کانفیگ</label><input id="quickConfigFile" type="file" accept=".json,.yaml,.yml,.txt,.conf,.confing,.subscription,text/plain,application/json,application/x-yaml"></div>
+          <div class="btns" style="margin-top:10px">
+          <button class="btn primary" id="quickImportBtn">واردکردن کانفیگ</button>
+          <button class="btn good" id="quickConnectBtn">اتصال VPN</button>
+          <button class="btn" id="quickDiscoverBtn">پیداکردن گزینه‌های عمومی</button>
+          <button class="btn" id="quickSpeedBtn">تست سرعت و انتخاب بهترین</button>
+          <button class="btn" id="quickProfilesBtn">مدیریت سرورها</button>
+          </div><div id="quickStatus" class="notice" role="status" aria-live="polite">آماده. برای اتصال باید کانفیگ یا اشتراک معتبر خودت را وارد کنی.</div>
+          </div>
+          """
+          if 'id="quickStartCard"' not in h:
+              if home_marker not in h:
+                  raise SystemExit("Could not locate dashboard insertion point")
+              h = h.replace(home_marker, quick_card + home_marker, 1)
+          js_marker = "function xmsg(s){const e=$('xMsg');if(e)e.textContent=s}"
+          quick_js = r'''
+          function quickStatus(message,kind){
+            const e=$('quickStatus'); if(!e)return;
+            e.textContent=String(message||'');
+            e.className='notice'+(kind?' '+kind:'');
+          }
+          function quickShowTab(id){
+            const t=document.querySelector('.tab[data-tab="'+id+'"]');
+            if(t)t.click();
+          }
+          function quickImportText(text){
+            const raw=String(text||'').trim();
+            if(!raw)throw new Error('ابتدا لینک یا متن کانفیگ را وارد کن.');
+            const before=data.profiles.length;
+            const result=importText(raw);
+            const added=data.profiles.length-before;
+            if(added){
+              const newest=data.profiles.slice(before).filter(p=>p.type!=='direct');
+              newest.forEach(p=>{p.enabled=true;});
+              if(newest.length)data.selectedId=newest[0].id;
+              save();
+            }
+            if(result.subs>0 || result.subsAdded>0){
+              quickStatus('لینک اشتراک شناسایی شد. نتیجهٔ دریافت را در تب Subscription بررسی کن.', 'ok');
+            }else if(added){
+              quickStatus(added+' کانفیگ اضافه شد. برای تست سرعت به «ابزارها» برو؛ سپس می‌توانی اتصال را امتحان کنی.', 'ok');
+            }else if(result.dup){
+              quickStatus('این کانفیگ‌ها از قبل وجود دارند؛ مورد تکراری اضافه نشد.', 'ok');
+            }else{
+              quickStatus('قالب قابل شناسایی پیدا نشد. لینک تکی، Base64، Clash YAML یا sing-box JSON را امتحان کن.', 'bad');
+            }
+            return result;
+          }
+          const quickImportButton=$('quickImportBtn');
+          if(quickImportButton)quickImportButton.addEventListener('click',()=>{
+            try{quickImportText($('quickConfigInput').value);}
+            catch(e){quickStatus(e.message,'bad');}
+          });
+          const quickFile=$('quickConfigFile');
+          if(quickFile)quickFile.addEventListener('change',async()=>{
+            const file=quickFile.files&&quickFile.files[0]; if(!file)return;
+            if(file.size>2*1024*1024){quickStatus('فایل بیش از ۲ مگابایت است؛ فایل کوچک‌تر انتخاب کن.','bad');quickFile.value='';return;}
+            try{const text=await file.text();$('quickConfigInput').value=text;quickImportText(text);}
+            catch(e){quickStatus('خواندن فایل ناموفق بود: '+e.message,'bad');}
+          });
+          const quickConnectButton=$('quickConnectBtn');
+          if(quickConnectButton)quickConnectButton.addEventListener('click',()=>{
+            try{
+              if(!nativeAvailable())throw new Error('اتصال VPN واقعی فقط داخل APK نصب‌شده در دسترس است.');
+              const usable=data.profiles.filter(p=>p.enabled&&p.type!=='direct'&&p.type!=='wireguard');
+              if(!usable.length)throw new Error('ابتدا یک کانفیگ پروکسی معتبر وارد و فعال کن.');
+              const config=buildConfig();
+              if(!config.route||!config.route.final||config.route.final==='direct')throw new Error('مسیر نهایی به سرور پروکسی وصل نیست؛ کانفیگ را بررسی کن.');
+              const response=nativeCall('requestVpn',JSON.stringify(config));
+              if(String(response)!=='OK')throw new Error(String(response));
+              quickStatus('درخواست اتصال ارسال شد؛ مجوز VPN اندروید را تأیید کن و وضعیت بالای صفحه را بررسی کن.','ok');
+              quickShowTab('engine');
+            }catch(e){quickStatus(e.message,'bad');}
+          });
+          const quickProfilesButton=$('quickProfilesBtn');
+          if(quickProfilesButton)quickProfilesButton.addEventListener('click',()=>quickShowTab('profiles'));
+          const quickDiscoverButton=$('quickDiscoverBtn');
+          if(quickDiscoverButton)quickDiscoverButton.addEventListener('click',()=>{
+            quickShowTab('tools');
+            setTimeout(()=>{
+              const toggle=$('spSources'),fetchButton=$('spFetch');
+              if(toggle&&!toggle.checked){toggle.checked=true;toggle.dispatchEvent(new Event('change'));}
+              if(fetchButton&&!fetchButton.disabled){fetchButton.click();quickStatus('در حال بررسی منابع عمومی. نتایج را دستی بررسی کن؛ کانفیگ‌های عمومی غیرفعال وارد می‌شوند.','ok');}
+              else quickStatus('بخش منابع عمومی در ابزارها آماده نشد؛ به تب ابزارها برو و Speed Booster را بررسی کن.','bad');
+            },120);
+          });
+          const quickSpeedButton=$('quickSpeedBtn');
+          if(quickSpeedButton)quickSpeedButton.addEventListener('click',()=>{
+            quickShowTab('tools');
+            setTimeout(()=>{
+              const boost=$('spEnabled'),test=$('spTestEnabled'),run=$('spRun');
+              if(boost&&!boost.checked){boost.checked=true;boost.dispatchEvent(new Event('change'));}
+              if(test&&!test.checked){test.checked=true;test.dispatchEvent(new Event('change'));}
+              if(run&&!run.disabled){run.click();quickStatus('تست واقعی آغاز شد. مصرف اینترنت متناسب با تعداد کانفیگ‌ها و اندازهٔ تست است؛ در پایان اتصال قطع می‌ماند.','ok');}
+              else quickStatus('برای تست واقعی باید APK دارای Native Bridge جدید و حداقل یک کانفیگ فعال داشته باشی.','bad');
+            },160);
+          });
+          '''
+          if 'function quickImportText(text)' not in h:
+              if js_marker not in h:
+                  raise SystemExit("Could not locate JS insertion point")
+              h = h.replace(js_marker, js_marker + "\n" + quick_js, 1)
+          html.write_text(h)
+          gradle = Path("app/build.gradle.kts")
+          g = gradle.read_text()
+          g = g.replace("versionCode = 220", "versionCode = 230").replace('versionName = "0.22.0"', 'versionName = "0.23.0"')
+          g = g.replace('abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")', 'abiFilters += listOf("arm64-v8a")')
+          gradle.write_text(g)
+          print("Applied v0.23.0 quick-connect UI, file import, and ARM64-only APK configuration")
           PY
 
       - name: Set up Node.js
@@ -127,7 +244,7 @@ jobs:
       - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: SmartTunnel-0.22.0-debug-apk
+          name: SmartTunnel-0.23.0-arm64-debug-apk
           path: ${{ steps.source.outputs.root }}/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
