@@ -256,6 +256,52 @@ jobs:
                   raise SystemExit("Could not locate JS insertion point")
               h = h.replace(js_marker, js_marker + "\n" + quick_js, 1)
           h = h.replace("v0.23.0", "v0.23.1").replace("0.23.0", "0.23.1")
+          # v0.23.2 visual overhaul: circuit-board backdrop, editorial brand typography, and animated native-feeling splash.
+          h = h.replace("v0.23.1", "v0.23.2").replace("0.23.1", "0.23.2")
+          visual_css = r'''/* Smart Tunnel v0.23.2 — circuit glass visual system */
+          :root{--st-ink:#eaf6ff;--st-muted:#9db8ce;--st-blue:#2c91ff;--st-cyan:#39d9f5;--st-green:#47f0a0;--st-glass:color-mix(in srgb,#09253a 78%,transparent);--st-line:color-mix(in srgb,#74cfff 20%,transparent)}
+          html,body{min-height:100%;background:#031523!important;color:var(--st-ink)}
+          body{background-image:radial-gradient(ellipse at 52% 42%,color-mix(in srgb,#0d5270 42%,transparent),transparent 60%),linear-gradient(180deg,color-mix(in srgb,#031321 84%,transparent),color-mix(in srgb,#03101b 93%,transparent)),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 420 840'%3E%3Cg fill='none' stroke='%23165a83' stroke-width='1.2' opacity='.52'%3E%3Cpath d='M0 0h52v72h26v40h44v32h36M0 24h32v90h40v44h54M0 198h22v-42h38v-34h48M0 248h42v56h44v38h32M420 0h-55v54h-34v38h-46v28h-52M420 30h-28v62h-38v44h-42M420 480h-42v54h-36v38h-42v44h-42M420 540h-22v68h-48v42h-48M0 720h60v-34h44v-30h48v-28h36M0 782h30v-38h40v-28h52v-22h40'/%3E%3C/g%3E%3Cg fill='%23218dc3' opacity='.8'%3E%3Ccircle cx='52' cy='72' r='3'/%3E%3Ccircle cx='122' cy='144' r='3'/%3E%3Ccircle cx='72' cy='114' r='3'/%3E%3Ccircle cx='365' cy='54' r='3'/%3E%3Ccircle cx='288' cy='120' r='3'/%3E%3Ccircle cx='342' cy='572' r='3'/%3E%3Ccircle cx='104' cy='656' r='3'/%3E%3Ccircle cx='158' cy='628' r='3'/%3E%3C/g%3E%3Cg fill='none' stroke='%23218dc3' stroke-width='2' opacity='.7'%3E%3Ccircle cx='78' cy='112' r='5'/%3E%3Ccircle cx='156' cy='144' r='5'/%3E%3Ccircle cx='330' cy='92' r='5'/%3E%3Ccircle cx='344' cy='572' r='5'/%3E%3Ccircle cx='158' cy='628' r='5'/%3E%3Ccircle cx='70' cy='720' r='5'/%3E%3C/g%3E%3C/svg%3E");background-position:center,center,center;background-size:cover,cover,100% 100%;background-attachment:fixed}
+          body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,color-mix(in srgb,#020b13 38%,transparent),transparent 22%,transparent 78%,color-mix(in srgb,#020b13 34%,transparent));}
+          .app,.app-shell,.container,.main,.content,.tab-content{background:transparent!important}
+          .card,.panel,.modal-content{border:1px solid var(--st-line)!important;border-radius:22px!important;background:linear-gradient(145deg,color-mix(in srgb,#0c3047 82%,transparent),color-mix(in srgb,#061827 88%,transparent))!important;box-shadow:0 18px 48px color-mix(in srgb,#000 22%,transparent),inset 0 1px 0 color-mix(in srgb,#d7f3ff 7%,transparent)!important;backdrop-filter:blur(18px) saturate(135%);-webkit-backdrop-filter:blur(18px) saturate(135%)}
+          .btn,button,input,textarea,select{border-radius:14px}
+          .btn.primary,button.primary{background:linear-gradient(135deg,#2a91ff,#1763d6)!important;border:1px solid color-mix(in srgb,#bce7ff 35%,transparent)!important;box-shadow:0 8px 25px color-mix(in srgb,#167bff 25%,transparent)}
+          .tab,.nav-item{border-radius:13px!important}
+          .st-brand-copy .st-eyebrow{display:none!important}
+          .st-hero-title{font-family:"Georgia","Palatino Linotype","Book Antiqua",serif!important;font-size:clamp(24px,6vw,32px)!important;letter-spacing:-.8px!important;font-weight:700!important}
+          .st-hero-description{max-width:35ch}
+          .st-glass-hero{border-color:color-mix(in srgb,#5edbff 26%,transparent)!important}
+          /* Remove technical slogan chips/side labels next to the product name. */
+          .brand-subtitle,.brand-meta,.header-subtitle,.app-subtitle,.brand-tags,.product-badges,.tech-stack-label,.tech-badges{display:none!important}
+          #stSplash{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:28px;background:radial-gradient(ellipse at 50% 42%,#0a3854 0%,#041b2b 48%,#020b14 100%);opacity:1;visibility:visible;transition:opacity .55s ease,visibility .55s ease}
+          #stSplash:before{content:"";position:absolute;inset:0;opacity:.65;background-image:linear-gradient(90deg,transparent 49.8%,#1b6b8a20 50%,transparent 50.2%),linear-gradient(0deg,transparent 49.8%,#1b6b8a20 50%,transparent 50.2%);background-size:36px 36px;mask-image:radial-gradient(ellipse at center,#000 10%,transparent 80%)}
+          #stSplash.st-done{opacity:0;visibility:hidden;pointer-events:none}
+          #stSplash .st-splash-inner{position:relative;display:grid;justify-items:center;gap:17px;text-align:center;animation:stRise .75s cubic-bezier(.2,.8,.2,1) both}
+          #stSplash .st-splash-mark{width:104px;height:104px;filter:drop-shadow(0 0 30px #1f8dff66);animation:stPulse 2.4s ease-in-out infinite}
+          #stSplash .st-splash-name{font-family:"Georgia","Palatino Linotype","Book Antiqua",serif;font-size:clamp(32px,9vw,46px);font-weight:700;letter-spacing:-1.5px;color:#f0f9ff}
+          #stSplash .st-splash-name span{color:#58e9a8}
+          #stSplash .st-splash-caption{font-size:11px;letter-spacing:3px;color:#8bb8d2}
+          #stSplash .st-splash-loader{width:120px;height:3px;overflow:hidden;border-radius:99px;background:#17364b}
+          #stSplash .st-splash-loader:after{content:"";display:block;width:40%;height:100%;border-radius:99px;background:linear-gradient(90deg,#38d7f4,#48f0a0);animation:stLoad 1.25s ease-in-out infinite}
+          @keyframes stRise{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+          @keyframes stPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+          @keyframes stLoad{from{transform:translateX(-130%)}to{transform:translateX(380%)}}
+          @media(prefers-reduced-motion:reduce){#stSplash .st-splash-inner,#stSplash .st-splash-mark,#stSplash .st-splash-loader:after{animation:none!important}#stSplash{transition:none}}
+          '''
+          if "Smart Tunnel v0.23.2 visual system" not in h:
+              style_end = h.rfind("</style>")
+              if style_end < 0: raise SystemExit("Could not locate stylesheet for v0.23.2")
+              h = h[:style_end] + visual_css + "\n" + h[style_end:]
+          splash = '''<div id="stSplash" role="status" aria-label="Starting Smart Tunnel"><div class="st-splash-inner"><svg class="st-splash-mark" viewBox="0 0 108 108" aria-hidden="true"><circle cx="54" cy="54" r="38" fill="#247BFF"/><path d="M72 36 C63 27 45 27 35 34 C25 41 29 50 42 55 L61 62 C75 68 72 81 59 87 C47 92 31 88 26 80" fill="none" stroke="#3BE88D" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="st-splash-name">Smart <span>Tunnel</span></div><div class="st-splash-caption">PRIVATE CONNECTION EXPERIENCE</div><div class="st-splash-loader"></div></div></div>'''
+          if 'id="stSplash"' not in h:
+              body_end = h.lower().rfind("</body>")
+              if body_end < 0: raise SystemExit("Could not locate body end for startup splash")
+              h = h[:body_end] + splash + "\n" + h[body_end:]
+          splash_js = '''<script>(function(){var s=document.getElementById("stSplash");if(!s)return;var done=false;function hide(){if(done)return;done=true;s.classList.add("st-done");setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},700)}window.addEventListener("load",function(){setTimeout(hide,950)},{once:true});setTimeout(hide,4200);document.addEventListener("visibilitychange",function(){if(!document.hidden)setTimeout(hide,250)});})();</script>'''
+          if 'function hide(){if(done)return;done=true;s.classList.add("st-done")' not in h:
+              body_end = h.lower().rfind("</body>")
+              h = h[:body_end] + splash_js + "\n" + h[body_end:]
           html.write_text(h)
           # Create matching app launcher assets: green S in a blue circle.
           res = Path("app/src/main/res")
@@ -370,7 +416,7 @@ jobs:
       - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: SmartTunnel-0.23.0-arm64-debug-apk
+          name: SmartTunnel-0.23.2-arm64-debug-apk
           path: ${{ steps.source.outputs.root }}/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
@@ -380,12 +426,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          APK_NAME="SmartTunnel-0.23.1-arm64.apk"
+          APK_NAME="SmartTunnel-0.23.2-arm64.apk"
           cp "${{ steps.source.outputs.root }}/app/build/outputs/apk/debug/app-debug.apk" "$APK_NAME"
           sha256sum "$APK_NAME" > "$APK_NAME.sha256"
-          if gh release view v0.23.1 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload v0.23.1 "$APK_NAME" "$APK_NAME.sha256" --clobber --repo "$GITHUB_REPOSITORY"
-            gh release edit v0.23.1 --latest --repo "$GITHUB_REPOSITORY"
+          if gh release view v0.23.2 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload v0.23.2 "$APK_NAME" "$APK_NAME.sha256" --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit v0.23.2 --latest --repo "$GITHUB_REPOSITORY"
           else
-            gh release create v0.23.1 "$APK_NAME" "$APK_NAME.sha256" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Smart Tunnel Pro v0.23.1 (ARM64)" --latest --notes "Mobile-first Persian glass UI, large one-tap connection entry, configuration import, speed-test shortcuts and a custom green-S/blue-circle adaptive launcher icon. Debug-signed APK for direct installation; physical VPN, network leak and Google Play release-signing tests are not implied."
+            gh release create v0.23.2 "$APK_NAME" "$APK_NAME.sha256" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Smart Tunnel Pro v0.23.2 (ARM64)" --latest --notes "Circuit-board glass redesign, editorial Smart Tunnel wordmark, animated startup splash, configuration import, speed-test shortcuts and custom green-S/blue-circle adaptive launcher icon. A proxy server/config is still required for a real VPN connection. Debug-signed APK for direct installation; physical VPN, network leak and Google Play release-signing tests are not implied."
           fi
