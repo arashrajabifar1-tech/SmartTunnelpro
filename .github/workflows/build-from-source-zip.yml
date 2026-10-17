@@ -75,6 +75,12 @@ jobs:
           html = Path("app/src/main/assets/index.html")
           h = html.read_text()
           h = h.replace("v0.22.0", "v0.23.0").replace("0.22.0", "0.23.0")
+          old_speed = "if(results.some(x=>x.ok))alert(`تست پایان یافت: ${results.filter(x=>x.ok).length}/${results.length} کانفیگ اندازه‌گیری شد. برای استفاده، کانفیگ مطلوب را از صفحهٔ مسیرها انتخاب و دوباره اتصال را دستی برقرار کن.`);"
+          new_speed = "if(results.some(x=>x.ok)){const best=list.filter(p=>historyFor(p.id)).sort(measuredSpeedSort)[0];if(best){data.selectedId=best.id;save();render();}alert(`تست پایان یافت: ${results.filter(x=>x.ok).length}/${results.length} کانفیگ اندازه‌گیری شد. سریع‌ترین کانفیگ اندازه‌گیری‌شده انتخاب شد: ${best?best.name:'—'}. برای اتصال، دکمهٔ اتصال را جداگانه بزن.`);}"
+          if old_speed in h:
+              h = h.replace(old_speed, new_speed, 1)
+          else:
+              raise SystemExit("Could not locate speed benchmark completion handler")
           home_marker = '<div class="card half"><div class="row"><strong>مسیر منتخب</strong>'
           quick_card = """<div class="card" id="quickStartCard">
           <div class="row"><strong>اتصال سریع • Smart Tunnel Pro 0.23.0</strong><span class="badge">Quick Start</span></div>
