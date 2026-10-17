@@ -188,6 +188,21 @@ jobs:
           g = g.replace("versionCode = 220", "versionCode = 230").replace('versionName = "0.22.0"', 'versionName = "0.23.0"')
           g = g.replace('abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")', 'abiFilters += listOf("arm64-v8a")')
           gradle.write_text(g)
+          validator = Path("scripts/validate_project.py")
+          v = validator.read_text()
+          v = v.replace("Smart Tunnel v0.22.0", "Smart Tunnel v0.23.0")
+          v = v.replace("HTML version is 0.22.0", "HTML version is 0.23.0")
+          v = v.replace('versionName = "0.22.0"', 'versionName = "0.23.0"')
+          v = v.replace("versionCode = 220", "versionCode = 230")
+          v = v.replace("Android app version is 0.22.0 / code 220", "Android app version is 0.23.0 / code 230")
+          v = v.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.23.0-arm64-debug-apk")
+          validator.write_text(v)
+          embedded_workflow = Path(".github/workflows/android-apk.yml")
+          if embedded_workflow.exists():
+              ew = embedded_workflow.read_text()
+              ew = ew.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.23.0-arm64-debug-apk")
+              ew = ew.replace("0.22.0", "0.23.0")
+              embedded_workflow.write_text(ew)
           print("Applied v0.23.0 quick-connect UI, file import, and ARM64-only APK configuration")
           PY
 
