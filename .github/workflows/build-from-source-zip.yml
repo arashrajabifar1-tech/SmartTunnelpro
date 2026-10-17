@@ -340,7 +340,7 @@ jobs:
           gradle = Path("app/build.gradle.kts")
           g = gradle.read_text()
           g = g.replace("versionCode = 220", "versionCode = 230").replace('versionName = "0.22.0"', 'versionName = "0.23.0"')
-          g = g.replace("versionCode = 230", "versionCode = 231").replace('versionName = "0.23.0"', 'versionName = "0.23.1"')
+          g = g.replace("versionCode = 230", "versionCode = 232").replace('versionName = "0.23.0"', 'versionName = "0.23.2"')
           g = g.replace('abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")', 'abiFilters += listOf("arm64-v8a")')
           gradle.write_text(g)
           validator = Path("scripts/validate_project.py")
@@ -350,17 +350,17 @@ jobs:
           v = v.replace('versionName = "0.22.0"', 'versionName = "0.23.0"')
           v = v.replace("versionCode = 220", "versionCode = 230")
           v = v.replace("Android app version is 0.22.0 / code 220", "Android app version is 0.23.0 / code 230")
-          v = v.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.23.1-arm64-debug-apk")
-          v = v.replace("0.23.0", "0.23.1").replace("code 230", "code 231").replace("versionCode = 230", "versionCode = 231")
+          v = v.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.23.2-arm64-debug-apk")
+          v = v.replace("0.23.0", "0.23.2").replace("code 230", "code 232").replace("versionCode = 230", "versionCode = 232")
           validator.write_text(v)
           embedded_workflow = Path(".github/workflows/android-apk.yml")
           if embedded_workflow.exists():
               ew = embedded_workflow.read_text()
-              ew = ew.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.23.1-arm64-debug-apk")
+              ew = ew.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.23.2-arm64-debug-apk")
               ew = ew.replace("0.22.0", "0.23.0")
-              ew = ew.replace("0.23.0", "0.23.1")
+              ew = ew.replace("0.23.0", "0.23.2")
               embedded_workflow.write_text(ew)
-          print("Applied v0.23.1 glass connect UI, branded launcher icon, and ARM64-only APK configuration")
+          print("Applied v0.23.2 circuit glass UI, animated splash, branded launcher icon, and ARM64-only APK configuration")
           PY
 
       - name: Set up Node.js
