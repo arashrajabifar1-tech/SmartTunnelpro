@@ -1,0 +1,78 @@
+/* Smart Tunnel monitor layout fix — v0.24.2 standalone HTML */
+/* Keep the monitoring heading/card in the normal page flow and prevent flex shrink. */
+#page-tools .st-monitor-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+#page-tools .st-monitor-head .st-monitor-heading {
+  flex: 1 1 0%;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+#page-tools .st-monitor-head .st-monitor-heading > h2,
+#page-tools .st-monitor-head .st-monitor-heading > p {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+#page-tools #failoverCard.st-monitor-card {
+  display: block;
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  direction: rtl;
+  text-align: start;
+}
+#page-tools #failoverCard.st-monitor-card > p,
+#page-tools #failoverCard #failoverStatus,
+#page-tools #failoverCard #failoverHistory {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+#page-tools #failoverCard .st-monitor-actions {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+#page-tools #failoverCard .st-monitor-actions > .btn {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+#page-tools #failoverCard #failoverHistory {
+  white-space: pre-wrap;
+  overflow: auto;
+}
+@media (max-width: 420px) {
+  #page-tools .st-monitor-head { gap: 8px; }
+  #page-tools .st-monitor-head > .pill { flex: 0 0 auto; }
+  #page-tools #failoverCard .st-monitor-actions > .btn { min-height: 40px; }
+}
