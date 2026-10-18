@@ -296,6 +296,34 @@ def patch_html(path: Path) -> None:
         s = s[:body_end] + "\n" + JS + "\n" + s[body_end:]
     path.write_text(s, encoding="utf-8")
 
+def bump_source_version(root: Path, html: Path) -> None:
+    h = html.read_text(encoding="utf-8")
+    h = h.replace("v0.24.2", "v0.24.3").replace("0.24.2", "0.24.3")
+    html.write_text(h, encoding="utf-8")
+
+    gradle = root / "app/build.gradle.kts"
+    if gradle.is_file():
+        g = gradle.read_text(encoding="utf-8")
+        g = g.replace('versionCode = 242', 'versionCode = 243')
+        g = g.replace('versionName = "0.24.2"', 'versionName = "0.24.3"')
+        gradle.write_text(g, encoding="utf-8")
+        if 'versionCode = 243' not in g or 'versionName = "0.24.3"' not in g:
+            raise SystemExit("Gradle version bump failed; expected versionCode 243 / versionName 0.24.3")
+
+    validator = root / "scripts/validate_project.py"
+    if validator.is_file():
+        v = validator.read_text(encoding="utf-8")
+        v = v.replace("0.24.2", "0.24.3").replace("code 242", "code 243").replace("versionCode = 242", "versionCode = 243")
+        validator.write_text(v, encoding="utf-8")
+
+    embedded = root / ".github/workflows/android-apk.yml"
+    if embedded.is_file():
+        ew = embedded.read_text(encoding="utf-8")
+        ew = ew.replace("SmartTunnel-0.24.2-arm64-debug-apk", "SmartTunnel-0.24.3-arm64-debug-apk")
+        ew = ew.replace("0.24.2", "0.24.3")
+        embedded.write_text(ew, encoding="utf-8")
+
+
 def main() -> None:
     if len(sys.argv) != 2:
         raise SystemExit("usage: integrate_failover.py <android-project-root>")
@@ -304,7 +332,8 @@ def main() -> None:
     if not html.is_file():
         raise SystemExit(f"Android HTML asset not found: {html}")
     patch_html(html)
-    print("Integrated failover UI wired to requestVpn/testThroughTunnel/validateConfig. No mock success path added.")
+    bump_source_version(root, html)
+    print("Integrated failover UI with requestVpn/testThroughTunnel/validateConfig, rejected mock success, and bumped Android package to v0.24.3 (code 243).")
 
 if __name__ == "__main__":
     main()
