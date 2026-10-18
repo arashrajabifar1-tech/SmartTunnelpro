@@ -1,6 +1,13 @@
-# Smart Tunnel Android v0.22.0 — Hardening, ShadowTLS & Speed Booster
+# Smart Tunnel Pro v0.24.3 — Native HTTPS Failover (ARM64)
 
-Persian RTL Android WebView UI, Kotlin `VpnService` bridge, and sing-box `libbox` integration. This package is **source prepared for a build**, not a compiled or signed APK.
+Persian RTL Android WebView UI, Kotlin `VpnService` bridge, and sing-box `libbox` integration. The current GitHub Release is built from the packaged Android source with CI compatibility patches and the v0.24.3 dashboard integration. The published APK is **debug-signed**; it is not a Play Store production-signed build.
+
+- **Latest APK:** [SmartTunnel-0.24.3-arm64.apk](https://github.com/arashrajabifar1-tech/SmartTunnelpro/releases/download/v0.24.3/SmartTunnel-0.24.3-arm64.apk)
+- **Build and test run:** [GitHub Actions #17](https://github.com/arashrajabifar1-tech/SmartTunnelpro/actions/runs/39115998894)
+- **Integrity:** the published APK's SHA-256 digest is recorded on the release asset and matches the successful build log.
+- **Native failover UI:** validates candidate configs with `validateConfig()`, requests the candidate via `requestVpn()`, and accepts health only after the existing Native async `testThroughTunnel()` reports HTTPS HTTP 204 from `www.gstatic.com/generate_204`. A physical-device connection test still requires a valid server profile.
+
+The source archive kept in this repository is based on the v0.22.0 project. The workflow applies compatibility/UI changes during CI; it does not mean the archive itself has been fully migrated to a v0.24.3 source tree.
 
 ## Added in v0.22.0
 
