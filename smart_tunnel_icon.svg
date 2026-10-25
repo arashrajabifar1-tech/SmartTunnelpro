@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Smart Tunnel app icon">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0755ff"/><stop offset=".48" stop-color="#002a9d"/><stop offset="1" stop-color="#001746"/></linearGradient>
+ <linearGradient id="shield" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#53ffff"/><stop offset=".48" stop-color="#087cff"/><stop offset="1" stop-color="#00d5ff"/></linearGradient>
+ <linearGradient id="road" x1=".1" y1="0" x2=".9" y2="1"><stop stop-color="#54ff68"/><stop offset=".45" stop-color="#00f5a2"/><stop offset="1" stop-color="#00d7ff"/></linearGradient>
+ <radialGradient id="core"><stop stop-color="#fff"/><stop offset=".08" stop-color="#83ffff"/><stop offset=".26" stop-color="#008cff" stop-opacity=".85"/><stop offset="1" stop-color="#002453" stop-opacity="0"/></radialGradient>
+ <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="12"/></filter>
+</defs>
+<rect x="8" y="8" width="496" height="496" rx="104" fill="url(#bg)"/>
+<rect x="8" y="8" width="496" height="496" rx="104" fill="none" stroke="#1b9bff" stroke-width="2" opacity=".9"/>
+<path d="M256 54 430 151 430 335Q430 377 400 401L256 470 112 401Q82 377 82 335L82 151Z" fill="#00152d" fill-opacity=".72" stroke="url(#shield)" stroke-width="17" stroke-linejoin="round" filter="url(#glow)"/>
+<g fill="none" stroke="#1676d5" opacity=".42">
+ <ellipse cx="256" cy="258" rx="151" ry="151" stroke-width="8"/><ellipse cx="256" cy="258" rx="127" ry="127" stroke-width="7"/><ellipse cx="256" cy="258" rx="102" ry="102" stroke-width="6"/><ellipse cx="256" cy="258" rx="78" ry="78" stroke-width="5"/><ellipse cx="256" cy="258" rx="55" ry="55" stroke-width="4"/>
+</g>
+<circle cx="256" cy="258" r="70" fill="url(#core)"/>
+<path d="M335 169C308 143 252 140 214 160C168 184 170 224 220 244L301 277C352 298 350 339 308 364C268 388 204 382 170 350" fill="none" stroke="#00e8ff" stroke-width="67" stroke-linecap="round" stroke-linejoin="round" opacity=".35" filter="url(#shadow)"/>
+<path d="M335 169C308 143 252 140 214 160C168 184 170 224 220 244L301 277C352 298 350 339 308 364C268 388 204 382 170 350" fill="none" stroke="url(#road)" stroke-width="56" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+<path d="M335 169C308 143 252 140 214 160C168 184 170 224 220 244L301 277C352 298 350 339 308 364C268 388 204 382 170 350" fill="none" stroke="#a9fff4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".75"/>
+<path d="M222 169Q191 187 192 213M295 327Q293 350 265 363" fill="none" stroke="#23eaff" stroke-width="7" stroke-linecap="round" stroke-dasharray="18 20"/>
+<circle cx="256" cy="258" r="18" fill="url(#core)"/>
+</svg>
