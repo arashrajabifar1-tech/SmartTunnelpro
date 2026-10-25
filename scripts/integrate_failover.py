@@ -304,16 +304,16 @@ def bump_source_version(root: Path, html: Path) -> None:
     gradle = root / "app/build.gradle.kts"
     if gradle.is_file():
         g = gradle.read_text(encoding="utf-8")
-        g = g.replace('versionCode = 242', 'versionCode = 243')
+        g = g.replace('versionCode = 243', 'versionCode = 244')
         g = g.replace('versionName = "0.24.2"', 'versionName = "0.24.4"')
         gradle.write_text(g, encoding="utf-8")
-        if 'versionCode = 243' not in g or 'versionName = "0.24.4"' not in g:
-            raise SystemExit("Gradle version bump failed; expected versionCode 243 / versionName 0.24.4")
+        if 'versionCode = 244' not in g or 'versionName = "0.24.4"' not in g:
+            raise SystemExit("Gradle version bump failed; expected versionCode 244 / versionName 0.24.4")
 
     validator = root / "scripts/validate_project.py"
     if validator.is_file():
         v = validator.read_text(encoding="utf-8")
-        v = v.replace("0.24.2", "0.24.4").replace("code 242", "code 243").replace("versionCode = 242", "versionCode = 243")
+        v = v.replace("0.24.2", "0.24.4").replace("code 243", "code 244").replace("versionCode = 243", "versionCode = 244")
         validator.write_text(v, encoding="utf-8")
 
     embedded = root / ".github/workflows/android-apk.yml"
@@ -333,7 +333,7 @@ def main() -> None:
         raise SystemExit(f"Android HTML asset not found: {html}")
     patch_html(html)
     bump_source_version(root, html)
-    print("Integrated failover UI with requestVpn/testThroughTunnel/validateConfig, rejected mock success, and bumped Android package to v0.24.4 (code 243).")
+    print("Integrated failover UI with requestVpn/testThroughTunnel/validateConfig, rejected mock success, and bumped Android package to v0.24.4 (code 244).")
 
 if __name__ == "__main__":
     main()
