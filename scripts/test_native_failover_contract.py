@@ -45,7 +45,7 @@ def main() -> None:
     if not html.is_file():
         fail("HTML asset missing")
     h = html.read_text(encoding="utf-8", errors="replace")
-    marker = "/* Smart Tunnel v0.24.3 native failover integration: JS */"
+    marker = "/* Smart Tunnel v0.24.4 native failover integration: JS */"
     if marker not in h:
         fail("Native failover JS integration marker missing")
     start = h.index(marker)
@@ -58,7 +58,7 @@ def main() -> None:
             fail("Failover integration lacks required contract: " + token)
     if "n.startVpn(" in block or "n.probeThroughTunnel(" in block:
         fail("Failover calls methods not implemented by this Android Native Bridge")
-    if "Smart Tunnel v0.24.3 native failover integration" not in h:
+    if "Smart Tunnel v0.24.4 native failover integration" not in h:
         fail("Failover UI/style marker missing")
     if h.count('id="stNativeFailoverCard"') != 1:
         fail("Expected exactly one native failover UI")
