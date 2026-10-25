@@ -3,12 +3,12 @@
 from pathlib import Path
 import sys
 
-MARKER = "/* Smart Tunnel v0.24.3 native failover integration */"
+MARKER = "/* Smart Tunnel v0.24.4 native failover integration */"
 HTML_MARKER = '<section id="stNativeFailoverCard"'
-JS_MARKER = "/* Smart Tunnel v0.24.3 native failover integration: JS */"
+JS_MARKER = "/* Smart Tunnel v0.24.4 native failover integration: JS */"
 
 CSS = r"""
-/* Smart Tunnel v0.24.3 native failover integration */
+/* Smart Tunnel v0.24.4 native failover integration */
 #stNativeFailoverCard{margin:14px 0;padding:16px;border:1px solid color-mix(in srgb,#52d9ff 20%,transparent);border-radius:20px;background:linear-gradient(145deg,color-mix(in srgb,#0b2b40 88%,transparent),color-mix(in srgb,#061725 94%,transparent));color:#e9f7ff}
 #stNativeFailoverCard .stf-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 #stNativeFailoverCard .stf-title{font-size:15px;font-weight:800}
@@ -35,13 +35,13 @@ CARD = r"""
 
 JS = r"""
 <script>
-/* Smart Tunnel v0.24.3 native failover integration: JS */
+/* Smart Tunnel v0.24.4 native failover integration: JS */
 (function () {
   'use strict';
   const byId = id => document.getElementById(id);
   const statusEl = byId('stfStatus');
-  if (!statusEl || window.__ST_NATIVE_FAILOVER_V243__) return;
-  window.__ST_NATIVE_FAILOVER_V243__ = true;
+  if (!statusEl || window.__ST_NATIVE_FAILOVER_V244__) return;
+  window.__ST_NATIVE_FAILOVER_V244__ = true;
 
   const HEALTH_URL = 'https://www.gstatic.com/generate_204';
   const MAX_HISTORY = 16;
@@ -278,7 +278,7 @@ JS = r"""
 
 def patch_html(path: Path) -> None:
     s = path.read_text(encoding="utf-8")
-    if "Smart Tunnel v0.24.3 native failover integration" not in s:
+    if "Smart Tunnel v0.24.4 native failover integration" not in s:
         style_end = s.rfind("</style>")
         if style_end < 0:
             raise SystemExit("Native failover integration: no </style> found")
@@ -298,29 +298,29 @@ def patch_html(path: Path) -> None:
 
 def bump_source_version(root: Path, html: Path) -> None:
     h = html.read_text(encoding="utf-8")
-    h = h.replace("v0.24.2", "v0.24.3").replace("0.24.2", "0.24.3")
+    h = h.replace("v0.24.2", "v0.24.4").replace("0.24.2", "0.24.4")
     html.write_text(h, encoding="utf-8")
 
     gradle = root / "app/build.gradle.kts"
     if gradle.is_file():
         g = gradle.read_text(encoding="utf-8")
         g = g.replace('versionCode = 242', 'versionCode = 243')
-        g = g.replace('versionName = "0.24.2"', 'versionName = "0.24.3"')
+        g = g.replace('versionName = "0.24.2"', 'versionName = "0.24.4"')
         gradle.write_text(g, encoding="utf-8")
-        if 'versionCode = 243' not in g or 'versionName = "0.24.3"' not in g:
-            raise SystemExit("Gradle version bump failed; expected versionCode 243 / versionName 0.24.3")
+        if 'versionCode = 243' not in g or 'versionName = "0.24.4"' not in g:
+            raise SystemExit("Gradle version bump failed; expected versionCode 243 / versionName 0.24.4")
 
     validator = root / "scripts/validate_project.py"
     if validator.is_file():
         v = validator.read_text(encoding="utf-8")
-        v = v.replace("0.24.2", "0.24.3").replace("code 242", "code 243").replace("versionCode = 242", "versionCode = 243")
+        v = v.replace("0.24.2", "0.24.4").replace("code 242", "code 243").replace("versionCode = 242", "versionCode = 243")
         validator.write_text(v, encoding="utf-8")
 
     embedded = root / ".github/workflows/android-apk.yml"
     if embedded.is_file():
         ew = embedded.read_text(encoding="utf-8")
-        ew = ew.replace("SmartTunnel-0.24.2-arm64-debug-apk", "SmartTunnel-0.24.3-arm64-debug-apk")
-        ew = ew.replace("0.24.2", "0.24.3")
+        ew = ew.replace("SmartTunnel-0.24.2-arm64-debug-apk", "SmartTunnel-0.24.4-arm64-debug-apk")
+        ew = ew.replace("0.24.2", "0.24.4")
         embedded.write_text(ew, encoding="utf-8")
 
 
@@ -333,7 +333,7 @@ def main() -> None:
         raise SystemExit(f"Android HTML asset not found: {html}")
     patch_html(html)
     bump_source_version(root, html)
-    print("Integrated failover UI with requestVpn/testThroughTunnel/validateConfig, rejected mock success, and bumped Android package to v0.24.3 (code 243).")
+    print("Integrated failover UI with requestVpn/testThroughTunnel/validateConfig, rejected mock success, and bumped Android package to v0.24.4 (code 243).")
 
 if __name__ == "__main__":
     main()
