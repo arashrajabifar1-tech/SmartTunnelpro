@@ -3,12 +3,12 @@
 from pathlib import Path
 import sys
 
-MARKER = "/* Smart Tunnel v0.24.6 native failover integration */"
+MARKER = "/* Smart Tunnel v0.24.5 native failover integration */"
 HTML_MARKER = '<section id="stNativeFailoverCard"'
-JS_MARKER = "/* Smart Tunnel v0.24.6 native failover integration: JS */"
+JS_MARKER = "/* Smart Tunnel v0.24.5 native failover integration: JS */"
 
 CSS = r"""
-/* Smart Tunnel v0.24.6 native failover integration */
+/* Smart Tunnel v0.24.5 native failover integration */
 #stNativeFailoverCard{margin:14px 0;padding:16px;border:1px solid color-mix(in srgb,#52d9ff 20%,transparent);border-radius:20px;background:linear-gradient(145deg,color-mix(in srgb,#0b2b40 88%,transparent),color-mix(in srgb,#061725 94%,transparent));color:#e9f7ff}
 #stNativeFailoverCard .stf-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 #stNativeFailoverCard .stf-title{font-size:15px;font-weight:800}
@@ -35,7 +35,7 @@ CARD = r"""
 
 JS = r"""
 <script>
-/* Smart Tunnel v0.24.6 native failover integration: JS */
+/* Smart Tunnel v0.24.5 native failover integration: JS */
 (function () {
   'use strict';
   const byId = id => document.getElementById(id);
@@ -278,7 +278,7 @@ JS = r"""
 
 def patch_html(path: Path) -> None:
     s = path.read_text(encoding="utf-8")
-    if "Smart Tunnel v0.24.6 native failover integration" not in s:
+    if "Smart Tunnel v0.24.5 native failover integration" not in s:
         style_end = s.rfind("</style>")
         if style_end < 0:
             raise SystemExit("Native failover integration: no </style> found")
