@@ -1,13 +1,14 @@
-# Smart Tunnel Pro v0.24.3 — Native HTTPS Failover (ARM64)
+# Smart Tunnel Pro v0.24.6 — Native HTTPS Failover (ARM64)
 
-Persian RTL Android WebView UI, Kotlin `VpnService` bridge, and sing-box `libbox` integration. The current GitHub Release is built from the packaged Android source with CI compatibility patches and the v0.24.3 dashboard integration. The published APK is **debug-signed**; it is not a Play Store production-signed build.
+Persian RTL Android WebView UI, Kotlin `VpnService` bridge, and sing-box `libbox` integration. The current GitHub Release is built from the packaged Android source with CI compatibility patches and the v0.24.6 dashboard integration. The published APK is **debug-signed**; it is not a Play Store production-signed build.
 
-- **Latest APK:** [SmartTunnel-0.24.3-arm64.apk](https://github.com/arashrajabifar1-tech/SmartTunnelpro/releases/download/v0.24.3/SmartTunnel-0.24.3-arm64.apk)
-- **Build and test run:** [GitHub Actions #17](https://github.com/arashrajabifar1-tech/SmartTunnelpro/actions/runs/39115998894)
+- **Latest APK:** [SmartTunnel-0.24.6-arm64.apk](https://github.com/arashrajabifar1-tech/SmartTunnelpro/releases/download/v0.24.6/SmartTunnel-0.24.6-arm64.apk)
+- **Build and test run:** [GitHub Actions #17](https://github.com/arashrajabifar1-tech/SmartTunnelpro/actions/workflows/build-from-source-zip.yml)
 - **Integrity:** the published APK's SHA-256 digest is recorded on the release asset and matches the successful build log.
+- **Native Bridge receiver fix (v0.24.6):** `nativeCall()` now invokes methods directly on the injected Android WebView object instead of extracting a detached method; CI includes a Node.js regression test and verifies browser-only mode fails closed.
 - **Native failover UI:** validates candidate configs with `validateConfig()`, requests the candidate via `requestVpn()`, and accepts health only after the existing Native async `testThroughTunnel()` reports HTTPS HTTP 204 from `www.gstatic.com/generate_204`. A physical-device connection test still requires a valid server profile.
 
-The source archive kept in this repository is based on the v0.22.0 project. The workflow applies compatibility/UI changes during CI; it does not mean the archive itself has been fully migrated to a v0.24.3 source tree.
+The source archive kept in this repository is based on the v0.22.0 project. The workflow applies compatibility/UI changes during CI; it does not mean the archive itself has been fully migrated to a v0.24.6 source tree.
 
 ## Added in v0.22.0
 
@@ -55,7 +56,7 @@ The project does not bundle the Gradle Wrapper. On GitHub, put the *contents* of
 
 ## Tests and release status
 
-The static validator and Playwright Chromium smoke suite are included under `scripts/` and `tests/`. In this delivery they passed the available JavaScript syntax, XML, UI, config-generation, `.ir` route, DoH preset persistence, emergency-config and no-fake-VPN checks.
+The static validator, Native Bridge receiver regression test, and Playwright Chromium smoke suite are included under `scripts/` and `tests/`. In this delivery they passed the available JavaScript syntax, XML, UI, config-generation, `.ir` route, DoH preset persistence, emergency-config and no-fake-VPN checks.
 
 This environment has no installed Gradle or Android SDK, so the APK was not compiled here. No physical-device throughput, DNS/IPv6 leak, disconnect/kill-switch, battery, Starlink, or censorship-network test has been performed. A successful build is still required before device testing; these source changes do not imply an audited or untraceable VPN.
 
