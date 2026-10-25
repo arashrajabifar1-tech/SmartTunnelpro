@@ -351,7 +351,7 @@ jobs:
               raise SystemExit("Supplied smart_tunnel_icon.svg is missing from the repository root")
           svg_text = supplied_icon.read_text(encoding="utf-8")
           import re, base64
-          match = re.search(r'href=["\\']data:image/(?:jpeg|png);base64,([^"\\']+)', svg_text)
+          match = re.search(r'href="data:image/(?:jpeg|png);base64,([^"]+)', svg_text)
           if not match:
               raise SystemExit("Supplied SVG does not contain the embedded source image")
           raw_image = base64.b64decode(match.group(1))
