@@ -12,6 +12,7 @@ on:
       - 'scripts/fix_native_bridge_calls.py'
       - 'scripts/test_native_bridge_invocation.cjs'
       - 'scripts/test_native_failover_contract.py'
+      - 'SmartTunnelPro-v0.24.7.html'
 
 permissions:
   contents: write
