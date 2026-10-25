@@ -261,8 +261,8 @@ jobs:
               h = h.replace(js_marker, js_marker + "\n" + quick_js, 1)
           h = h.replace("v0.23.0", "v0.23.1").replace("0.23.0", "0.23.1")
           # v0.23.2 visual overhaul: circuit-board backdrop, editorial brand typography, and animated native-feeling splash.
-          h = h.replace("v0.23.1", "v0.24.4").replace("0.23.1", "0.24.4")
-          visual_css = r'''/* Smart Tunnel v0.24.4 — circuit glass visual system */
+          h = h.replace("v0.23.1", "v0.24.5").replace("0.23.1", "0.24.5")
+          visual_css = r'''/* Smart Tunnel v0.24.5 — circuit glass visual system */
           :root{--st-ink:#eaf6ff;--st-muted:#9db8ce;--st-blue:#2c91ff;--st-cyan:#39d9f5;--st-green:#47f0a0;--st-glass:color-mix(in srgb,#09253a 78%,transparent);--st-line:color-mix(in srgb,#74cfff 20%,transparent)}
           html,body{min-height:100%;background:#031523!important;color:var(--st-ink)}
           body{background-image:radial-gradient(ellipse at 52% 42%,color-mix(in srgb,#0d5270 42%,transparent),transparent 60%),linear-gradient(180deg,color-mix(in srgb,#031321 84%,transparent),color-mix(in srgb,#03101b 93%,transparent)),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 420 840'%3E%3Cg fill='none' stroke='%23165a83' stroke-width='1.2' opacity='.52'%3E%3Cpath d='M0 0h52v72h26v40h44v32h36M0 24h32v90h40v44h54M0 198h22v-42h38v-34h48M0 248h42v56h44v38h32M420 0h-55v54h-34v38h-46v28h-52M420 30h-28v62h-38v44h-42M420 480h-42v54h-36v38h-42v44h-42M420 540h-22v68h-48v42h-48M0 720h60v-34h44v-30h48v-28h36M0 782h30v-38h40v-28h52v-22h40'/%3E%3C/g%3E%3Cg fill='%23218dc3' opacity='.8'%3E%3Ccircle cx='52' cy='72' r='3'/%3E%3Ccircle cx='122' cy='144' r='3'/%3E%3Ccircle cx='72' cy='114' r='3'/%3E%3Ccircle cx='365' cy='54' r='3'/%3E%3Ccircle cx='288' cy='120' r='3'/%3E%3Ccircle cx='342' cy='572' r='3'/%3E%3Ccircle cx='104' cy='656' r='3'/%3E%3Ccircle cx='158' cy='628' r='3'/%3E%3C/g%3E%3Cg fill='none' stroke='%23218dc3' stroke-width='2' opacity='.7'%3E%3Ccircle cx='78' cy='112' r='5'/%3E%3Ccircle cx='156' cy='144' r='5'/%3E%3Ccircle cx='330' cy='92' r='5'/%3E%3Ccircle cx='344' cy='572' r='5'/%3E%3Ccircle cx='158' cy='628' r='5'/%3E%3Ccircle cx='70' cy='720' r='5'/%3E%3C/g%3E%3C/svg%3E");background-position:center,center,center;background-size:cover,cover,100% 100%;background-attachment:fixed}
@@ -293,7 +293,7 @@ jobs:
           @keyframes stLoad{from{transform:translateX(-130%)}to{transform:translateX(380%)}}
           @media(prefers-reduced-motion:reduce){#stSplash .st-splash-inner,#stSplash .st-splash-mark,#stSplash .st-splash-loader:after{animation:none!important}#stSplash{transition:none}}
           '''
-          if "Smart Tunnel v0.24.4 visual system" not in h:
+          if "Smart Tunnel v0.24.5 visual system" not in h:
               style_end = h.rfind("</style>")
               if style_end < 0: raise SystemExit("Could not locate stylesheet for v0.23.2")
               h = h[:style_end] + visual_css + "\n" + h[style_end:]
@@ -349,8 +349,14 @@ jobs:
           supplied_icon = Path(os.environ["GITHUB_WORKSPACE"]) / "smart_tunnel_icon.svg"
           if not supplied_icon.is_file():
               raise SystemExit("Supplied smart_tunnel_icon.svg is missing from the repository root")
-          rendered = cairosvg.svg2png(url=str(supplied_icon), output_width=432, output_height=432)
-          icon_image = Image.open(BytesIO(rendered)).convert("RGBA")
+          svg_text = supplied_icon.read_text(encoding="utf-8")
+          import re, base64
+          match = re.search(r'href=["\\']data:image/(?:jpeg|png);base64,([^"\\']+)', svg_text)
+          if not match:
+              raise SystemExit("Supplied SVG does not contain the embedded source image")
+          raw_image = base64.b64decode(match.group(1))
+          icon_image = Image.open(BytesIO(raw_image)).convert("RGBA")
+          icon_image = ImageOps.fit(icon_image, (432, 432), method=Image.Resampling.LANCZOS, centering=(0.5, 0.5))
           nodpi = res / "drawable-nodpi"
           nodpi.mkdir(parents=True, exist_ok=True)
           (res / "drawable" / "st_icon_foreground.xml").unlink(missing_ok=True)
@@ -370,7 +376,7 @@ jobs:
           gradle = Path("app/build.gradle.kts")
           g = gradle.read_text()
           g = g.replace("versionCode = 220", "versionCode = 230").replace('versionName = "0.22.0"', 'versionName = "0.23.0"')
-          g = g.replace("versionCode = 230", "versionCode = 244").replace('versionName = "0.23.0"', 'versionName = "0.24.4"')
+          g = g.replace("versionCode = 230", "versionCode = 245").replace('versionName = "0.23.0"', 'versionName = "0.24.5"')
           g = g.replace('abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")', 'abiFilters += listOf("arm64-v8a")')
           gradle.write_text(g)
           validator = Path("scripts/validate_project.py")
@@ -380,17 +386,64 @@ jobs:
           v = v.replace('versionName = "0.22.0"', 'versionName = "0.23.0"')
           v = v.replace("versionCode = 220", "versionCode = 230")
           v = v.replace("Android app version is 0.22.0 / code 220", "Android app version is 0.23.0 / code 230")
-          v = v.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.24.4-arm64-debug-apk")
-          v = v.replace("0.23.0", "0.24.4").replace("code 230", "code 244").replace("versionCode = 230", "versionCode = 244")
+          v = v.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.24.5-arm64-debug-apk")
+          v = v.replace("0.23.0", "0.24.5").replace("code 230", "code 245").replace("versionCode = 230", "versionCode = 245")
           validator.write_text(v)
           embedded_workflow = Path(".github/workflows/android-apk.yml")
           if embedded_workflow.exists():
               ew = embedded_workflow.read_text()
-              ew = ew.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.24.4-arm64-debug-apk")
+              ew = ew.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.24.5-arm64-debug-apk")
               ew = ew.replace("0.22.0", "0.23.0")
-              ew = ew.replace("0.23.0", "0.24.4")
+              ew = ew.replace("0.23.0", "0.24.5")
               embedded_workflow.write_text(ew)
-          print("Applied v0.24.4 circuit glass UI, animated splash, branded launcher icon, and ARM64-only APK configuration")
+          print("Applied v0.24.5 circuit glass UI, animated splash, branded launcher icon, and ARM64-only APK configuration")
+          PY
+
+      - name: Add three-destination bottom navigation
+        working-directory: ${{ steps.source.outputs.root }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path("app/src/main/assets/index.html")
+          s=p.read_text(encoding="utf-8")
+          marker='id="stBottomNavV245"'
+          if marker not in s:
+              css = """
+          /* Smart Tunnel v0.24.5 — three-destination bottom navigation */
+          #stBottomNavV245{position:fixed;z-index:999;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:8px max(10px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-right));background:rgba(5,14,26,.96);border-top:1px solid rgba(125,180,230,.25);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+          #stBottomNavV245 button{min-width:0;min-height:48px;border:1px solid rgba(125,180,230,.22);border-radius:14px;background:rgba(22,39,61,.92);color:#a9c3d8;padding:8px 5px;font:inherit;font-size:12px;font-weight:750;display:flex;align-items:center;justify-content:center;gap:6px}
+          #stBottomNavV245 button.active{background:linear-gradient(135deg,#155c9a,#0c765d);border-color:#51d8ad;color:#fff}
+          #stBottomNavV245 button:focus-visible{outline:2px solid #51d8ad;outline-offset:2px}
+          body{padding-bottom:calc(94px + env(safe-area-inset-bottom))!important}
+          """
+              style_end=s.rfind("</style>")
+              if style_end < 0: raise SystemExit("Cannot add bottom navigation: stylesheet not found")
+              s=s[:style_end]+css+"\n"+s[style_end:]
+              nav = '''
+          <nav id="stBottomNavV245" aria-label="ناوبری اصلی سه‌بخشی" role="navigation">
+            <button type="button" data-st-destination="home" class="active" aria-current="page">⌂ <span>خانه</span></button>
+            <button type="button" data-st-destination="profiles">⇄ <span>سرورها</span></button>
+            <button type="button" data-st-destination="tools">✣ <span>ابزارها</span></button>
+          </nav>
+          <script>
+          (function(){
+            const nav=document.getElementById("stBottomNavV245"); if(!nav)return;
+            const group=id=>(id==="home"||id==="subscription"||id==="learn")?"home":((id==="profiles"||id==="ext")?"profiles":"tools");
+            function sync(id){const active=group(id);nav.querySelectorAll("[data-st-destination]").forEach(b=>{const yes=b.dataset.stDestination===active;b.classList.toggle("active",yes);if(yes)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")})}
+            nav.addEventListener("click",e=>{const b=e.target.closest("[data-st-destination]");if(!b)return;const id=b.dataset.stDestination;const tab=document.querySelector('.tab[data-tab="'+id+'"]');if(tab)tab.click();else if(typeof window.showTab==="function")window.showTab(id);sync(id);window.scrollTo({top:0,behavior:"smooth"})});
+            document.querySelectorAll(".tab[data-tab]").forEach(t=>t.addEventListener("click",()=>sync(t.dataset.tab)));
+            sync("home");
+          })();
+          </script>
+          '''
+              end=s.lower().rfind("</body>")
+              if end<0: raise SystemExit("Cannot add bottom navigation: body end not found")
+              s=s[:end]+nav+"\n"+s[end:]
+          if s.count('data-st-destination=') != 3: raise SystemExit("Expected exactly three bottom navigation buttons")
+          p.write_text(s,encoding="utf-8")
+          print("Added working three-destination bottom navigation: home, servers, tools")
           PY
 
       - name: Integrate Native failover and run bridge contract tests
@@ -454,7 +507,7 @@ jobs:
       - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: SmartTunnel-0.24.4-arm64-debug-apk
+          name: SmartTunnel-0.24.5-arm64-debug-apk
           path: ${{ steps.source.outputs.root }}/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
@@ -464,12 +517,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          APK_NAME="SmartTunnel-0.24.4-arm64.apk"
+          APK_NAME="SmartTunnel-0.24.5-arm64.apk"
           cp "${{ steps.source.outputs.root }}/app/build/outputs/apk/debug/app-debug.apk" "$APK_NAME"
           sha256sum "$APK_NAME" > "$APK_NAME.sha256"
-          if gh release view v0.24.4 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload v0.24.4 "$APK_NAME" "$APK_NAME.sha256" --clobber --repo "$GITHUB_REPOSITORY"
-            gh release edit v0.24.4 --latest --repo "$GITHUB_REPOSITORY"
+          if gh release view v0.24.5 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload v0.24.5 "$APK_NAME" "$APK_NAME.sha256" --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit v0.24.5 --latest --repo "$GITHUB_REPOSITORY"
           else
-            gh release create v0.24.4 "$APK_NAME" "$APK_NAME.sha256" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Smart Tunnel Pro v0.24.4 (ARM64)" --latest --notes "Smart Tunnel Pro v0.24.4: ARM64 build with Native failover wired to requestVpn/testThroughTunnel/validateConfig, real HTTPS-204 probe contract checks, Persian mobile-first connection/import/speed-test UI, green S in a blue-circle launcher icon, static validation and Chromium regression tests. A valid proxy/server profile is required for real tunneling. Debug-signed APK; CI verifies native bridge contract and build, but cannot certify a live tunnel without a valid user-owned server profile. Physical-device connectivity, DNS/IPv6 leak, and Google Play release-signing tests are not implied."
+            gh release create v0.24.5 "$APK_NAME" "$APK_NAME.sha256" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Smart Tunnel Pro v0.24.5 (ARM64)" --latest --notes "Smart Tunnel Pro v0.24.5: ARM64 build with Native failover wired to requestVpn/testThroughTunnel/validateConfig, real HTTPS-204 probe contract checks, Persian mobile-first connection/import/speed-test UI, green S in a blue-circle launcher icon, static validation and Chromium regression tests. A valid proxy/server profile is required for real tunneling. Debug-signed APK; CI verifies native bridge contract and build, but cannot certify a live tunnel without a valid user-owned server profile. Physical-device connectivity, DNS/IPv6 leak, and Google Play release-signing tests are not implied."
           fi
