@@ -298,29 +298,29 @@ def patch_html(path: Path) -> None:
 
 def bump_source_version(root: Path, html: Path) -> None:
     h = html.read_text(encoding="utf-8")
-    h = h.replace("v0.24.7", "v0.24.7").replace("0.24.7", "0.24.7")
+    h = h.replace("v0.24.7", "v0.24.9").replace("0.24.7", "0.24.9")
     html.write_text(h, encoding="utf-8")
 
     gradle = root / "app/build.gradle.kts"
     if gradle.is_file():
         g = gradle.read_text(encoding="utf-8")
-        g = g.replace('versionCode = 247', 'versionCode = 247')
-        g = g.replace('versionName = "0.24.7"', 'versionName = "0.24.7"')
+        g = g.replace('versionCode = 247', 'versionCode = 249')
+        g = g.replace('versionName = "0.24.7"', 'versionName = "0.24.9"')
         gradle.write_text(g, encoding="utf-8")
-        if 'versionCode = 247' not in g or 'versionName = "0.24.7"' not in g:
-            raise SystemExit("Gradle version bump failed; expected versionCode 245 / versionName 0.24.7")
+        if 'versionCode = 249' not in g or 'versionName = "0.24.9"' not in g:
+            raise SystemExit("Gradle version bump failed; expected versionCode 249 / versionName 0.24.9")
 
     validator = root / "scripts/validate_project.py"
     if validator.is_file():
         v = validator.read_text(encoding="utf-8")
-        v = v.replace("0.24.7", "0.24.7").replace("code 243", "code 247").replace("versionCode = 247", "versionCode = 247")
+        v = v.replace("0.24.7", "0.24.9").replace("code 243", "code 249").replace("versionCode = 247", "versionCode = 249")
         validator.write_text(v, encoding="utf-8")
 
     embedded = root / ".github/workflows/android-apk.yml"
     if embedded.is_file():
         ew = embedded.read_text(encoding="utf-8")
-        ew = ew.replace("SmartTunnel-0.24.7-arm64-debug-apk", "SmartTunnel-0.24.7-arm64-debug-apk")
-        ew = ew.replace("0.24.7", "0.24.7")
+        ew = ew.replace("SmartTunnel-0.24.7-arm64-debug-apk", "SmartTunnel-0.24.9-arm64-debug-apk")
+        ew = ew.replace("0.24.7", "0.24.9")
         embedded.write_text(ew, encoding="utf-8")
 
 
@@ -333,7 +333,7 @@ def main() -> None:
         raise SystemExit(f"Android HTML asset not found: {html}")
     patch_html(html)
     bump_source_version(root, html)
-    print("Integrated failover UI with requestVpn/testThroughTunnel/validateConfig, rejected mock success, and bumped Android package to v0.24.7 (code 247).")
+    print("Integrated failover UI with requestVpn/testThroughTunnel/validateConfig, rejected mock success, and bumped Android package to v0.24.9 (code 249).")
 
 if __name__ == "__main__":
     main()
