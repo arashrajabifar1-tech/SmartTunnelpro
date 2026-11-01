@@ -12,7 +12,8 @@ on:
       - 'scripts/fix_native_bridge_calls.py'
       - 'scripts/test_native_bridge_invocation.cjs'
       - 'scripts/test_native_failover_contract.py'
-      - 'SmartTunnelPro-v0.24.9.html'
+      - 'scripts/test_semver_target_validation.cjs'
+      - 'SmartTunnelPro-v0.25.0.html'
 
 permissions:
   contents: write
@@ -379,7 +380,7 @@ jobs:
           gradle = Path("app/build.gradle.kts")
           g = gradle.read_text()
           g = g.replace("versionCode = 220", "versionCode = 230").replace('versionName = "0.22.0"', 'versionName = "0.23.0"')
-          g = g.replace("versionCode = 230", "versionCode = 249").replace('versionName = "0.23.0"', 'versionName = "0.24.9"')
+          g = g.replace("versionCode = 230", "versionCode = 250").replace('versionName = "0.23.0"', 'versionName = "0.25.0"')
           g = g.replace('abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")', 'abiFilters += listOf("arm64-v8a")')
           gradle.write_text(g)
           validator = Path("scripts/validate_project.py")
@@ -390,7 +391,7 @@ jobs:
           v = v.replace("versionCode = 220", "versionCode = 230")
           v = v.replace("Android app version is 0.22.0 / code 220", "Android app version is 0.23.0 / code 230")
           v = v.replace("SmartTunnel-0.22.0-debug-apk", "SmartTunnel-0.24.9-arm64-debug-apk")
-          v = v.replace("0.23.0", "0.24.9").replace("code 230", "code 249").replace("versionCode = 230", "versionCode = 249")
+          v = v.replace("0.23.0", "0.24.9").replace("code 230", "code 249").replace("versionCode = 230", "versionCode = 250")
           validator.write_text(v)
           embedded_workflow = Path(".github/workflows/android-apk.yml")
           if embedded_workflow.exists():
@@ -454,9 +455,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          CANONICAL="$GITHUB_WORKSPACE/SmartTunnelPro-v0.24.9.html"
-          test -s "$CANONICAL" || { echo "Canonical v0.24.9 HTML missing"; exit 1; }
-          grep -q "CURRENT_APP_VERSION='0.24.9'" "$CANONICAL"
+          CANONICAL="$GITHUB_WORKSPACE/SmartTunnelPro-v0.25.0.html"
+          test -s "$CANONICAL" || { echo "Canonical v0.25.0 HTML missing"; exit 1; }
+          grep -q "CURRENT_APP_VERSION='0.25.0'" "$CANONICAL"
           install -D "$CANONICAL" app/src/main/assets/index.html
           cmp -s "$CANONICAL" app/src/main/assets/index.html
           echo "Canonical HTML copied byte-for-byte into Android assets."
@@ -485,6 +486,7 @@ jobs:
         run: |
           python scripts/validate_project.py
           node "$GITHUB_WORKSPACE/scripts/test_native_bridge_invocation.cjs" "$PWD/app/src/main/assets/index.html"
+          node "$GITHUB_WORKSPACE/scripts/test_semver_target_validation.cjs" "$PWD/app/src/main/assets/index.html"
 
       - name: Run Chromium UI regression tests
         working-directory: ${{ steps.source.outputs.root }}
