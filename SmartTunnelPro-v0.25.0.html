@@ -498,7 +498,7 @@ function dispatchSTLayers(name,core,receiver,args){
 const defaults={version:'0.25.0',subscriptions:[],profiles:[{id:uid(),name:'Direct',type:'direct',address:'',user:'',pass:'',note:'مسیر مستقیم',enabled:true,last:null}],selectedId:null,auto:false,lastRun:0,lastScore:null,config:null};
 const CURRENT_APP_VERSION='0.25.0';let pendingVersionMigration=null;
 function cloneDefaults(){return JSON.parse(JSON.stringify(defaults))}
-function stVersionAtLeast(target,required){const parts=v=>String(v??'0').trim().replace(/^v/i,'').split(/[.+-]/).slice(0,3).map(x=>{const m=String(x).match(/^\d+/);return m?Number(m[0]):0});const a=parts(target),b=parts(required);for(let i=0;i<3;i++){if(a[i]!==b[i])return a[i]>b[i]}return true}
+function stVersionAtLeast(target,required){const parts=v=>String(v??'0').trim().replace(/^v/i,'').split(/[.+-]/).slice(0,3).map(x=>{const m=String(x).match(/^\d+/);return m?Number(m[0]):0});const a=parts(target),b=parts(required);for(let i=0;i<3;i++){const av=a[i]??0,bv=b[i]??0;if(av!==bv)return av>bv}return true}
 function compareVersion(a,b){const aa=String(a||'0').replace(/^v/i,'').split('.').map(x=>parseInt(x,10)||0),bb=String(b||'0').replace(/^v/i,'').split('.').map(x=>parseInt(x,10)||0);for(let i=0;i<Math.max(aa.length,bb.length);i++){const d=(aa[i]||0)-(bb[i]||0);if(d)return d}return 0}
 function mergeLoadedData(raw){const x=raw&&typeof raw==='object'?raw:{};const merged=Object.assign(cloneDefaults(),x);const from=String(x.version||'0.0.0');if(compareVersion(from,CURRENT_APP_VERSION)<0){merged.version=CURRENT_APP_VERSION;pendingVersionMigration=`Data migrated from version ${from} to ${CURRENT_APP_VERSION}`}return merged}
 let data=load();let timer=null;
