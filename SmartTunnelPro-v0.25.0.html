@@ -547,7 +547,7 @@ function parseHysteria2(p,raw,enh){
   const readPacketSize=(keys)=>{for(const k of keys){if(u.searchParams.has(k)){const n=Number(u.searchParams.get(k));return Number.isFinite(n)&&n>0?n:0;}}return 0;};
   if(hasObfs){
     if(!['salamander','gecko'].includes(obfs))throw new Error('obfs.type نامعتبر: '+String(rawObfs??'')+'. مقادیر معتبر: salamander، gecko.');
-    const target=Number(enh&&enh.target||'1.14');
+    const target=String(enh&&enh.target||'1.14');
     if(!stVersionAtLeast(target,'1.11'))throw new Error('Hysteria2 obfs از sing-box 1.11+ پشتیبانی می‌شود.');
     if(obfs==='gecko'&&!stVersionAtLeast(target,'1.14'))throw new Error('Gecko obfs فقط در sing-box 1.14+ در دسترس است؛ برای نسخه‌های قدیمی‌تر از salamander استفاده کن.');
     if(!String(obfsPass).trim())throw new Error('برای obfs به obfs-password نیاز است.');
