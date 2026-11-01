@@ -1,14 +1,14 @@
-# Smart Tunnel Pro v0.24.7 — Canonical HTML + Android APK
+# Smart Tunnel Pro v0.25.0 — HTML technical fixes
 
-Persian RTL Android WebView UI, Kotlin `VpnService` bridge, and sing-box `libbox` integration. The current GitHub Release is built from the packaged Android source with CI compatibility patches and the v0.24.7 dashboard integration. The published APK is **debug-signed**; it is not a Play Store production-signed build.
+Persian RTL Android WebView UI, Kotlin `VpnService` bridge, and sing-box `libbox` integration. The latest source update is v0.25.0; the APK must be rebuilt by CI before it can be called the matching v0.25.0 release. The published APK is **debug-signed**; it is not a Play Store production-signed build.
 
-- **Latest APK:** [SmartTunnel-0.24.7-arm64.apk](https://github.com/arashrajabifar1-tech/SmartTunnelpro/releases/download/v0.24.7/SmartTunnel-0.24.7-arm64.apk)
+- **Latest previously published APK:** v0.24.7 (not yet rebuilt for v0.25.0)
 - **Build and test run:** [GitHub Actions #17](https://github.com/arashrajabifar1-tech/SmartTunnelpro/actions/workflows/build-from-source-zip.yml)
 - **Integrity:** the published APK's SHA-256 digest is recorded on the release asset and matches the successful build log.
-- **Native Bridge receiver fix (v0.24.7):** `nativeCall()` now invokes methods directly on the injected Android WebView object instead of extracting a detached method; CI includes a Node.js regression test and verifies browser-only mode fails closed.
+- **Native Bridge receiver fix (v0.25.0):** `nativeCall()` now invokes methods directly on the injected Android WebView object instead of extracting a detached method; CI includes a Node.js regression test and verifies browser-only mode fails closed.
 - **Native failover UI:** validates candidate configs with `validateConfig()`, requests the candidate via `requestVpn()`, and accepts health only after the existing Native async `testThroughTunnel()` reports HTTPS HTTP 204 from `www.gstatic.com/generate_204`. A physical-device connection test still requires a valid server profile.
 
-The Android WebView entrypoint is now sourced from [SmartTunnelPro-v0.24.7.html](SmartTunnelPro-v0.24.7.html), and the build workflow copies it into `app/src/main/assets/index.html` before native bridge integration and regression tests. The APK is debug-signed, not Play Store production-signed. A valid user-owned server profile and a physical Android device are still required to verify live VPN connectivity.
+The Android WebView entrypoint is sourced from [SmartTunnelPro-v0.25.0.html](SmartTunnelPro-v0.25.0.html). v0.25.0 fixes sing-box target-version comparisons by using semantic version parsing instead of decimal-number comparisons (which incorrectly order versions such as 1.9 and 1.11). CI now runs dedicated regression cases for 1.9, 1.10, 1.11, 1.13 and 1.14 before packaging. The workflow copies the canonical HTML byte-for-byte into `app/src/main/assets/index.html`. The APK is debug-signed, not Play Store production-signed. A valid user-owned server profile and a physical Android device are still required to verify live VPN connectivity.
 
 ## Added in v0.22.0
 
